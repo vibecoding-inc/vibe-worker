@@ -6,4 +6,14 @@ services:
       - 'POSTGRES_PASSWORD=secret'
       - 'POSTGRES_USER=myuser'
     ports:
-      - '5432'
+      - '5432:5432'
+  dex:
+    image: 'ghcr.io/dexidp/dex:v2.41.1'
+    command:
+      - dex
+      - serve
+      - /etc/dex/config.yaml
+    volumes:
+      - './dex/config.yaml:/etc/dex/config.yaml:ro'
+    ports:
+      - '5556:5556'

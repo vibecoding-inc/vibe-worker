@@ -1,0 +1,25 @@
+issuer: http://localhost:5556/dex
+
+storage:
+  type: memory
+
+web:
+  http: 0.0.0.0:5556
+
+oauth2:
+  skipApprovalScreen: true
+
+staticClients:
+  - id: vibe-worker
+    name: vibe-worker
+    secret: vibe-worker-secret
+    redirectURIs:
+      - http://localhost:8080/login/oauth2/code/dex
+
+enablePasswordDB: true
+
+staticPasswords:
+  - email: testuser@localhost
+    hash: $2a$10$h.tWWiNJVy9v03CNmFbDQu7ka/HApSzgJqOmOxIPpuD7ShJAnidgu
+    username: testuser
+    userID: f5b8c7e2-2e6f-4f78-8df7-6f6b79f88d0b
