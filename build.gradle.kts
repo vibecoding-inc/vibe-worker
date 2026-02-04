@@ -92,7 +92,7 @@ tasks.withType<Test> {
     useJUnitPlatform()
     
     // Add Mockito as a Java agent to avoid self-attaching warnings
-    // See: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+    // See: https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html
     val byteBuddyAgent = configurations.testRuntimeClasspath.get()
         .resolvedConfiguration.resolvedArtifacts
         .find { it.name == "byte-buddy-agent" }
