@@ -37,7 +37,6 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/master' }}
-          gradle-home-cache-cleanup: true
 
       - name: Build with Gradle
         run: ./gradlew build --no-daemon --stacktrace
@@ -90,7 +89,6 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/master' }}
-          gradle-home-cache-cleanup: true
 
       - name: Build native image
         run: ./gradlew nativeCompile --no-daemon --stacktrace
