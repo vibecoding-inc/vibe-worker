@@ -92,6 +92,9 @@ allOpen {
 tasks.withType<Test> {
     useJUnitPlatform()
     
+    // Enable parallel test execution
+    maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).takeIf { it > 0 } ?: 1
+
     // Add Mockito as a Java agent to avoid self-attaching warnings
     // See: https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html
     val byteBuddyAgent = configurations.testRuntimeClasspath.get()
