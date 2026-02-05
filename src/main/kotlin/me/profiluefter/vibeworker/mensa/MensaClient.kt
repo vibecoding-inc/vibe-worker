@@ -40,16 +40,12 @@ class MenuMatcher(private val data: MenuList) {
 }
 
 @Component
-class MensaClient {
-
-    private val api: RestClient = RestClient.builder()
-        .baseUrl(JkuEndpoints.BASE)
-        .build()
+class MensaClient(private val mensaRestClient: RestClient) {
 
     private val menuListType = object : ParameterizedTypeReference<MenuList>() {}
 
     fun downloadCurrentMenus(): MenuList {
-        val result = api.get()
+        val result = mensaRestClient.get()
             .uri(JkuEndpoints.MENUS)
             .retrieve()
             .body(menuListType)
