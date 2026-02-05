@@ -1,5 +1,7 @@
 package me.profiluefter.vibeworker.mensa
 
+import me.profiluefter.vibeworker.mensa.service.MensaClientImpl
+import me.profiluefter.vibeworker.mensa.service.JkuEndpoints
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.AfterEach
@@ -36,7 +38,7 @@ class MensaClientTest {
         val restClient = RestClient.builder()
             .baseUrl(JkuEndpoints.BASE)
             .build()
-        val mensaClient = MensaClient(restClient)
+        val mensaClient = MensaClientImpl(restClient)
 
         // Just verify it doesn't throw - deserialization works
         val menus = mensaClient.downloadCurrentMenus()
@@ -58,7 +60,7 @@ class MensaClientTest {
         val restClient = RestClient.builder()
             .baseUrl(mockWebServer.url("/").toString().trimEnd('/'))
             .build()
-        val mensaClient = MensaClient(restClient)
+        val mensaClient = MensaClientImpl(restClient)
 
         val menus = mensaClient.downloadCurrentMenus()
 
@@ -94,7 +96,7 @@ class MensaClientTest {
         val restClient = RestClient.builder()
             .baseUrl(mockWebServer.url("/").toString().trimEnd('/'))
             .build()
-        val mensaClient = MensaClient(restClient)
+        val mensaClient = MensaClientImpl(restClient)
 
         val menus = mensaClient.downloadCurrentMenus()
         val jkuMensa = menus.find { it.restaurant.name == "JKU Mensa" }
@@ -126,7 +128,7 @@ class MensaClientTest {
         val restClient = RestClient.builder()
             .baseUrl(mockWebServer.url("/").toString().trimEnd('/'))
             .build()
-        val mensaClient = MensaClient(restClient)
+        val mensaClient = MensaClientImpl(restClient)
 
         val menus = mensaClient.downloadCurrentMenus()
         val jkuMensa = menus.find { it.restaurant.name == "JKU Mensa" }
@@ -156,7 +158,7 @@ class MensaClientTest {
         val restClient = RestClient.builder()
             .baseUrl(mockWebServer.url("/").toString().trimEnd('/'))
             .build()
-        val mensaClient = MensaClient(restClient)
+        val mensaClient = MensaClientImpl(restClient)
 
         val menus = mensaClient.downloadCurrentMenus()
         assertTrue(menus.isEmpty())
