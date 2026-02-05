@@ -1,5 +1,6 @@
 package me.profiluefter.vibeworker.mensa
 
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
@@ -40,7 +41,9 @@ class MenuMatcher(private val data: MenuList) {
 }
 
 @Component
-class MensaClient(private val mensaRestClient: RestClient) {
+class MensaClient(
+    @Qualifier(MENSA_REST_CLIENT_QUALIFIER) private val mensaRestClient: RestClient
+) {
 
     private val menuListType = object : ParameterizedTypeReference<MenuList>() {}
 
