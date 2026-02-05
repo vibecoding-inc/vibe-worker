@@ -1,6 +1,7 @@
 package me.profiluefter.vibeworker.mensa
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import java.time.DayOfWeek
 
 /**
  * DTOs for the JKU Mensa Menu API response.
@@ -43,10 +44,6 @@ data class OpeningDay(
     val closed: Boolean,
     val openingHours: List<OpeningHoursSlot>
 )
-
-enum class DayOfWeek {
-    MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY
-}
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class OpeningHoursSlot(

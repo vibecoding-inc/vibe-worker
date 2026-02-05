@@ -12,34 +12,6 @@ object JkuEndpoints {
     const val MENUS = "/api/menus"
 }
 
-class MenuMatcher(private val data: MenuList) {
-
-    fun byVenueName(n: String): RestaurantMenuResponse? {
-        val target = n.lowercase()
-        var idx = 0
-        while (idx < data.size) {
-            val current = data[idx]
-            if (current.restaurant.name.lowercase() == target) {
-                return current
-            }
-            idx++
-        }
-        return null
-    }
-
-    fun byVenueId(i: Long): RestaurantMenuResponse? {
-        var idx = 0
-        while (idx < data.size) {
-            val current = data[idx]
-            if (current.restaurant.id == i) {
-                return current
-            }
-            idx++
-        }
-        return null
-    }
-}
-
 @Component
 class MensaClient(
     @Qualifier(MENSA_REST_CLIENT_QUALIFIER) private val mensaRestClient: RestClient
@@ -54,6 +26,4 @@ class MensaClient(
             .body(menuListType)
         return result ?: emptyList()
     }
-
-    fun matcher(): MenuMatcher = MenuMatcher(downloadCurrentMenus())
 }
