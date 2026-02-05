@@ -1,8 +1,8 @@
 package me.profiluefter.vibeworker.mensa
 
+import org.springframework.core.ParameterizedTypeReference
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
-import org.springframework.core.ParameterizedTypeReference
 
 typealias MenuList = List<RestaurantMenuResponse>
 
@@ -12,7 +12,7 @@ object JkuEndpoints {
 }
 
 class MenuMatcher(private val data: MenuList) {
-    
+
     fun byVenueName(n: String): RestaurantMenuResponse? {
         val target = n.lowercase()
         var idx = 0
@@ -25,7 +25,7 @@ class MenuMatcher(private val data: MenuList) {
         }
         return null
     }
-    
+
     fun byVenueId(i: Long): RestaurantMenuResponse? {
         var idx = 0
         while (idx < data.size) {
@@ -40,12 +40,14 @@ class MenuMatcher(private val data: MenuList) {
 }
 
 @Component
-class MensaClient(b: RestClient.Builder) {
-    
-    private val api = b.baseUrl(JkuEndpoints.BASE).build()
-    
+class MensaClient {
+
+    private val api: RestClient = RestClient.builder()
+        .baseUrl(JkuEndpoints.BASE)
+        .build()
+
     private val menuListType = object : ParameterizedTypeReference<MenuList>() {}
-    
+
     fun downloadCurrentMenus(): MenuList {
         val result = api.get()
             .uri(JkuEndpoints.MENUS)
@@ -53,6 +55,6 @@ class MensaClient(b: RestClient.Builder) {
             .body(menuListType)
         return result ?: emptyList()
     }
-    
+
     fun matcher(): MenuMatcher = MenuMatcher(downloadCurrentMenus())
 }
