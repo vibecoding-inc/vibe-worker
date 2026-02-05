@@ -1,0 +1,103 @@
+[
+  {
+    "restaurant": {
+      "id": 4,
+      "name": "JKU Mensa",
+      "street": "Altenbergerstraße",
+      "streetNr": "69",
+      "postalCode": "4040",
+      "city": "Linz",
+      "phoneNr": "0732 2468 4500",
+      "email": "mensa.linz@mensen.at",
+      "imageUrl": "https://example.com/mensa.jpg",
+      "homePageLink": "https://www.mensen.at/",
+      "toGo": true,
+      "toGoInfo": null,
+      "preOrdering": false,
+      "menuOpeningTimesDe": "Menü Classic 1 + 2 von 11:15 bis 13:30 Uhr erhältlich",
+      "menuOpeningTimesEn": "Classic 1 + 2 menu available from 11:15 to 13:30",
+      "preOrderingInfo": null,
+      "openingHours": [
+        {
+          "id": 22,
+          "openingDay": "MONDAY",
+          "closed": false,
+          "openingHours": [{"id": 18, "openFrom": "11:00", "openTo": "14:00"}]
+        },
+        {
+          "id": 27,
+          "openingDay": "SATURDAY",
+          "closed": true,
+          "openingHours": []
+        }
+      ]
+    },
+    "menuTypes": [
+      {
+        "menuTypeName": "Classic 1",
+        "menu": {
+          "id": 218279,
+          "sortOrder": 1.0,
+          "prices": [
+            {"id": 218410, "price": 6.2, "description": "für Uni-Angehörige", "sortOrder": 100.0}
+          ],
+          "description": null,
+          "menuTypeName": "Classic 1",
+          "date": null,
+          "menuTypeId": 5,
+          "priceRequirement": "MENU_PRICE_REQUIRED",
+          "groupedDishes": {
+            "STARTER": [],
+            "MAIN_COURSE": [
+              {
+                "id": 218383,
+                "name": "Apfelstrudel",
+                "type": "VEGETARIAN",
+                "category": "MAIN_COURSE",
+                "sortOrder": 100.0,
+                "sides": "mit Vanillesauce",
+                "kosher": false,
+                "halal": false,
+                "alternative": null,
+                "prices": [],
+                "allergens": [{"id": 1, "name": "Gluten", "shortName": "A"}],
+                "dishTemplateId": 113207
+              }
+            ],
+            "DESSERT": []
+          }
+        }
+      }
+    ],
+    "menu": {
+      "id": 180201,
+      "active": true,
+      "restaurantMenuGroups": []
+    },
+    "closedReason": null
+  },
+  {
+    "restaurant": {
+      "id": 3,
+      "name": "Teichwerk",
+      "street": "Altenbergerstraße",
+      "streetNr": "69",
+      "postalCode": "4040",
+      "city": "Linz",
+      "phoneNr": "0732 24686928",
+      "email": "reservierung@teichwerk.at",
+      "imageUrl": "https://example.com/teichwerk.png",
+      "homePageLink": "dasteichwerk.at",
+      "toGo": true,
+      "toGoInfo": null,
+      "preOrdering": true,
+      "menuOpeningTimesDe": null,
+      "menuOpeningTimesEn": null,
+      "preOrderingInfo": null,
+      "openingHours": []
+    },
+    "menuTypes": [],
+    "menu": null,
+    "closedReason": null
+  }
+]
