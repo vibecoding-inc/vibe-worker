@@ -1,11 +1,11 @@
 plugins {
-    kotlin("jvm") version "2.2.21"
-    kotlin("plugin.spring") version "2.2.21"
+    kotlin("jvm") version "2.3.0"
+    kotlin("plugin.spring") version "2.3.0"
     id("org.springframework.boot") version "4.0.2"
     id("io.spring.dependency-management") version "1.1.7"
     id("org.hibernate.orm") version "7.2.1.Final"
     id("org.graalvm.buildtools.native") version "0.11.4"
-    kotlin("plugin.jpa") version "2.2.21"
+    kotlin("plugin.jpa") version "2.3.0"
 }
 
 group = "me.profiluefter"
@@ -14,7 +14,7 @@ description = "vibe-worker"
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }
 
