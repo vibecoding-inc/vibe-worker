@@ -14,11 +14,9 @@ CREATE TABLE event_publication (
     last_resubmission_date TIMESTAMP
 );
 
--- Index for querying incomplete event publications
-CREATE INDEX idx_event_publication_completion_date ON event_publication(completion_date);
-
--- Index for querying by publication date
-CREATE INDEX idx_event_publication_publication_date ON event_publication(publication_date);
+-- Partial index for querying incomplete event publications (most common query)
+-- This is more efficient than indexing completion_date with NULLs
+CREATE INDEX idx_event_publication_incomplete ON event_publication(publication_date) WHERE completion_date IS NULL;
 
 -- Index for querying by status
 CREATE INDEX idx_event_publication_status ON event_publication(status);
