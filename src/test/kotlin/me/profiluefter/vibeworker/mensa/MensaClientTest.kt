@@ -1,19 +1,13 @@
 package me.profiluefter.vibeworker.mensa
 
-import me.profiluefter.vibeworker.mensa.service.*
+import me.profiluefter.vibeworker.mensa.service.MensaClientImpl
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchers.anyLong
-import org.mockito.Mockito.*
 import org.springframework.web.client.RestClient
-import java.time.LocalDate
-import java.util.*
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class MensaClientTest {

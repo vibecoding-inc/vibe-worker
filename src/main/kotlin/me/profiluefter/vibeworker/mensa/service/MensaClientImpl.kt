@@ -1,13 +1,10 @@
 package me.profiluefter.vibeworker.mensa.service
 
-import me.profiluefter.vibeworker.mensa.*
-import org.slf4j.LoggerFactory
+import me.profiluefter.vibeworker.mensa.MensaClient
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.body
-import java.time.LocalDate
 
 @Component
 class MensaClientImpl(

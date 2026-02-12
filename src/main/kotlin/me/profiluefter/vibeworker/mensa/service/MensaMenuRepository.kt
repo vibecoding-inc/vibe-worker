@@ -8,5 +8,4 @@ import java.time.LocalDate
 interface MensaMenuRepository : JpaRepository<MensaMenu, Int> {
     fun deleteByRestaurantAndMenuDate(restaurant: MensaRestaurant, menuDate: LocalDate)
     fun findByRestaurantAndMenuDate(restaurant: MensaRestaurant, menuDate: LocalDate): MensaMenu?
-    fun saveAndFlush(menu: MensaMenu): MensaMenu
 }

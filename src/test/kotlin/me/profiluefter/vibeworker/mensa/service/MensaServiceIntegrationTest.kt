@@ -2,7 +2,6 @@ package me.profiluefter.vibeworker.mensa.service
 
 import me.profiluefter.vibeworker.TestcontainersConfiguration
 import me.profiluefter.vibeworker.mensa.MensaClient
-import me.profiluefter.vibeworker.mensa.MensaDishDto
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDate
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 

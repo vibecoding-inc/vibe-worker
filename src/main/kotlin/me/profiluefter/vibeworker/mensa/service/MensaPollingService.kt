@@ -1,6 +1,7 @@
 package me.profiluefter.vibeworker.mensa.service
 
-import me.profiluefter.vibeworker.mensa.*
+import me.profiluefter.vibeworker.mensa.MensaService
+import me.profiluefter.vibeworker.mensa.MenuChangedEvent
 import org.slf4j.LoggerFactory
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
@@ -8,7 +9,6 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDate
 
 @Service
 class MensaPollingService(
