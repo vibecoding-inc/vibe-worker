@@ -1,3 +1,8 @@
 spring:
   application:
     name: vibe-worker
+
+shibboleth:
+  idp-url: https://shibboleth.im.jku.at/idp/profile/SAML2/Redirect/SSO
+  username: ${SHIBBOLETH_USER:}
+  password: ${SHIBBOLETH_PASSWORD:}
