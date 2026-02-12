@@ -9,6 +9,9 @@ updates:
       - "dependencies"
       - "github-actions"
     open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "*"
+        update-types: [ "version-update:semver-patch" ]
 
   # Gradle dependencies updates
   - package-ecosystem: "gradle"
@@ -19,6 +22,9 @@ updates:
       - "dependencies"
       - "gradle"
     open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "*"
+        update-types: [ "version-update:semver-patch" ]
     groups:
       spring:
         patterns:
