@@ -1,43 +1,41 @@
 package me.profiluefter.vibeworker.mensa.service
 
-import me.profiluefter.vibeworker.mensa.MensaClient
-import me.profiluefter.vibeworker.mensa.MenuChangedEvent
-import me.profiluefter.vibeworker.mensa.Restaurant
-import me.profiluefter.vibeworker.mensa.RestaurantMenuResponse
+import me.profiluefter.vibeworker.mensa.*
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
 import org.springframework.context.ApplicationEventPublisher
+import java.time.LocalDate
 
 class MensaPollingServiceTest {
 
-    private val mensaClient = mock(MensaClient::class.java)
+    private val mensaService = mock(MensaService::class.java)
     private val eventPublisher = mock(ApplicationEventPublisher::class.java)
-    private val pollingService = MensaPollingService(mensaClient, eventPublisher)
+    private val pollingService = MensaPollingService(mensaService, eventPublisher)
 
     @Test
     fun `pollMenus publishes event when menus change`() {
-        val restaurant = Restaurant(
-            1, "Test", null, null, null, null, null, null, null, null, 
-            false, null, false, null, null, null, emptyList()
-        )
-        val menus1 = listOf(RestaurantMenuResponse(restaurant, emptyList(), null, null))
-        val menus2 = listOf(RestaurantMenuResponse(restaurant.copy(name = "Changed"), emptyList(), null, null))
+        val oldMenus = emptyList<MensaMenuDto>()
+        val newMenus = listOf(MensaMenuDto(1, "Test", LocalDate.now(), emptyList()))
 
-        `when`(mensaClient.downloadCurrentMenus()).thenReturn(menus1)
+        `when`(mensaService.refreshMenus()).thenReturn(MensaServiceRefreshResult(oldMenus, newMenus, true))
 
-        // First poll - should publish event as it's the first fetch
+        // First poll - should publish event
         pollingService.pollMenus()
-        verify(eventPublisher).publishEvent(MenuChangedEvent(menus1))
+        verify(eventPublisher).publishEvent(MenuChangedEvent(oldMenus, newMenus))
 
-        // Second poll - no change
+        // Second poll - no change reported by service
         reset(eventPublisher)
-        `when`(mensaClient.downloadCurrentMenus()).thenReturn(menus1)
+        `when`(mensaService.refreshMenus()).thenReturn(MensaServiceRefreshResult(newMenus, newMenus, false))
         pollingService.pollMenus()
         verifyNoInteractions(eventPublisher)
+    }
 
-        // Third poll - change
-        `when`(mensaClient.downloadCurrentMenus()).thenReturn(menus2)
-        pollingService.pollMenus()
-        verify(eventPublisher).publishEvent(MenuChangedEvent(menus2))
+    @Test
+    fun `run calls pollMenus`() {
+        `when`(mensaService.refreshMenus()).thenReturn(MensaServiceRefreshResult(emptyList(), emptyList(), false))
+
+        pollingService.run(mock(org.springframework.boot.ApplicationArguments::class.java))
+
+        verify(mensaService).refreshMenus()
     }
 }

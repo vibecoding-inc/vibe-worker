@@ -1,10 +1,10 @@
 package me.profiluefter.vibeworker.mensa
 
-typealias MenuList = List<RestaurantMenuResponse>
+import me.profiluefter.vibeworker.mensa.service.RestaurantMenuResponse
 
 interface MensaClient {
     /**
-     * Downloads the current menus from the JKU Mensa API.
+     * Fetches fresh menus from the API.
      */
-    fun downloadCurrentMenus(): MenuList
+    fun fetchMenus(): List<RestaurantMenuResponse>
 }

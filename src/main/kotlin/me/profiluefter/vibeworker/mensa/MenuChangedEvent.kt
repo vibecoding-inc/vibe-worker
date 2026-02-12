@@ -4,5 +4,6 @@ import org.springframework.modulith.events.Externalized
 
 @Externalized("mensa.menu-changed")
 data class MenuChangedEvent(
-    val menus: MenuList
+    val oldMenus: List<MensaMenuDto>,
+    val newMenus: List<MensaMenuDto>
 )

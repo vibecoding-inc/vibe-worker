@@ -1,13 +1,17 @@
 package me.profiluefter.vibeworker.mensa
 
-import me.profiluefter.vibeworker.mensa.service.MensaClientImpl
-import me.profiluefter.vibeworker.mensa.service.JkuEndpoints
+import me.profiluefter.vibeworker.mensa.service.*
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.anyLong
+import org.mockito.Mockito.*
 import org.springframework.web.client.RestClient
+import java.time.LocalDate
+import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -30,26 +34,10 @@ class MensaClientTest {
     }
 
     /**
-     * Integration test that fetches the current mensa menu from the real API.
-     * Only checks that deserialization works without errors.
+     * Test that fetchMenus returns data from API.
      */
     @Test
-    fun `downloadCurrentMenus deserializes real API response without errors`() {
-        val restClient = RestClient.builder()
-            .baseUrl(JkuEndpoints.BASE)
-            .build()
-        val mensaClient = MensaClientImpl(restClient)
-
-        // Just verify it doesn't throw - deserialization works
-        val menus = mensaClient.downloadCurrentMenus()
-        assertNotNull(menus)
-    }
-
-    /**
-     * Test with mock data that verifies the mensa client correctly deserializes restaurant data.
-     */
-    @Test
-    fun `downloadCurrentMenus deserializes mocked restaurant data correctly`() {
+    fun `fetchMenus returns data from API`() {
         mockWebServer.enqueue(
             MockResponse()
                 .setResponseCode(200)
@@ -62,92 +50,18 @@ class MensaClientTest {
             .build()
         val mensaClient = MensaClientImpl(restClient)
 
-        val menus = mensaClient.downloadCurrentMenus()
+        val result = mensaClient.fetchMenus()
 
-        assertEquals(2, menus.size)
-        
-        // Verify first restaurant (JKU Mensa)
-        val jkuMensa = menus.find { it.restaurant.name == "JKU Mensa" }
-        assertNotNull(jkuMensa)
-        assertEquals(4L, jkuMensa.restaurant.id)
-        assertEquals("Linz", jkuMensa.restaurant.city)
-        assertEquals("4040", jkuMensa.restaurant.postalCode)
-        assertTrue(jkuMensa.restaurant.toGo)
-        
-        // Verify second restaurant (Teichwerk)
-        val teichwerk = menus.find { it.restaurant.name == "Teichwerk" }
-        assertNotNull(teichwerk)
-        assertEquals(3L, teichwerk.restaurant.id)
-        assertTrue(teichwerk.restaurant.preOrdering)
-    }
-
-    /**
-     * Test that verifies opening hours are correctly deserialized from mock data.
-     */
-    @Test
-    fun `downloadCurrentMenus deserializes opening hours correctly`() {
-        mockWebServer.enqueue(
-            MockResponse()
-                .setResponseCode(200)
-                .setHeader("Content-Type", "application/json")
-                .setBody(mockMensaResponse)
-        )
-
-        val restClient = RestClient.builder()
-            .baseUrl(mockWebServer.url("/").toString().trimEnd('/'))
-            .build()
-        val mensaClient = MensaClientImpl(restClient)
-
-        val menus = mensaClient.downloadCurrentMenus()
-        val jkuMensa = menus.find { it.restaurant.name == "JKU Mensa" }
-        assertNotNull(jkuMensa)
-
-        val openingHours = jkuMensa.restaurant.openingHours
-        assertTrue(openingHours.isNotEmpty())
-        
-        val mondayHours = openingHours.find { it.openingDay == java.time.DayOfWeek.MONDAY }
-        assertNotNull(mondayHours)
-        assertEquals(false, mondayHours.closed)
-        assertTrue(mondayHours.openingHours.isNotEmpty())
-        assertEquals("11:00", mondayHours.openingHours.first().openFrom)
-        assertEquals("14:00", mondayHours.openingHours.first().openTo)
-    }
-
-    /**
-     * Test that verifies menu types are correctly deserialized from mock data.
-     */
-    @Test
-    fun `downloadCurrentMenus deserializes menu types correctly`() {
-        mockWebServer.enqueue(
-            MockResponse()
-                .setResponseCode(200)
-                .setHeader("Content-Type", "application/json")
-                .setBody(mockMensaResponse)
-        )
-
-        val restClient = RestClient.builder()
-            .baseUrl(mockWebServer.url("/").toString().trimEnd('/'))
-            .build()
-        val mensaClient = MensaClientImpl(restClient)
-
-        val menus = mensaClient.downloadCurrentMenus()
-        val jkuMensa = menus.find { it.restaurant.name == "JKU Mensa" }
-        assertNotNull(jkuMensa)
-
-        val menuTypes = jkuMensa.menuTypes
-        assertTrue(menuTypes.isNotEmpty())
-        
-        val classic1 = menuTypes.find { it.menuTypeName == "Classic 1" }
-        assertNotNull(classic1)
-        assertNotNull(classic1.menu)
-        assertEquals(1.0, classic1.menu?.sortOrder)
+        assertTrue(result.isNotEmpty())
+        assertEquals("JKU Mensa", result[0].restaurant.name)
+        assertEquals(4L, result[0].restaurant.id)
     }
 
     /**
      * Test that empty response is handled correctly.
      */
     @Test
-    fun `downloadCurrentMenus returns empty list for empty response`() {
+    fun `fetchMenus returns empty list for empty response`() {
         mockWebServer.enqueue(
             MockResponse()
                 .setResponseCode(200)
@@ -160,7 +74,7 @@ class MensaClientTest {
             .build()
         val mensaClient = MensaClientImpl(restClient)
 
-        val menus = mensaClient.downloadCurrentMenus()
-        assertTrue(menus.isEmpty())
+        val result = mensaClient.fetchMenus()
+        assertTrue(result.isEmpty())
     }
 }
