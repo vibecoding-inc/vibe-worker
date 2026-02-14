@@ -3,6 +3,6 @@ spring:
     name: vibe-worker
 
 shibboleth:
-  idp-url: https://shibboleth.im.jku.at/idp/profile/SAML2/Redirect/SSO
+  default-target-url: https://moodle.jku.at/login/index.php
   username: ${SHIBBOLETH_USER:}
   password: ${SHIBBOLETH_PASSWORD:}

@@ -5,11 +5,11 @@ package me.profiluefter.vibeworker.shibboleth
  */
 interface ShibbolethService {
     /**
-     * Provides a valid Shibboleth SSO session.
-     * Implementations should handle caching and re-authentication if the session expires.
+     * Performs a Shibboleth login for the specified target URL.
      *
-     * @return A valid [ShibbolethSession].
+     * @param targetUrl The URL of the service to log into (e.g., moodle.jku.at/login/index.php).
+     * @return A [ShibbolethSession] containing the cookies obtained during the login process.
      * @throws RuntimeException if authentication fails.
      */
-    fun getSession(): ShibbolethSession
+    fun login(targetUrl: String): ShibbolethSession
 }

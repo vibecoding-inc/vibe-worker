@@ -17,22 +17,13 @@ internal class ShibbolethServiceImpl(
     private val props: ShibbolethProperties
 ) : ShibbolethService {
     private val logger = LoggerFactory.getLogger(javaClass)
-    private var cachedSession: ShibbolethSession? = null
 
-    @Synchronized
-    override fun getSession(): ShibbolethSession {
-        val currentSession = cachedSession
-        if (currentSession != null && currentSession.isValid()) {
-            return currentSession
-        }
-
-        logger.info("Performing Shibboleth login for user {}", props.username)
-        val session = performLogin()
-        this.cachedSession = session
-        return session
+    override fun login(targetUrl: String): ShibbolethSession {
+        logger.info("Performing Shibboleth login for user {} at target {}", props.username, targetUrl)
+        return performLogin(targetUrl)
     }
 
-    private fun performLogin(): ShibbolethSession {
+    private fun performLogin(targetUrl: String): ShibbolethSession {
         val cookieManager = CookieManager()
         val client = HttpClient.newBuilder()
             .followRedirects(HttpClient.Redirect.ALWAYS)
@@ -41,27 +32,35 @@ internal class ShibbolethServiceImpl(
 
         // 1. Initial GET to obtain the login form and execution state
         val initialRequest = HttpRequest.newBuilder()
-            .uri(URI.create(props.idpUrl))
+            .uri(URI.create(targetUrl))
+            .header(
+                "User-Agent",
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
+            )
             .GET()
             .build()
 
         val initialResponse = client.send(initialRequest, HttpResponse.BodyHandlers.ofString())
 
         if (initialResponse.statusCode() != 200) {
-            throw RuntimeException("Failed to load Shibboleth login page: status ${initialResponse.statusCode()}")
+            throw RuntimeException("Failed to load Shibboleth login page: status ${initialResponse.statusCode()} at ${initialResponse.uri()}")
         }
 
         val body = initialResponse.body()
-        val execution =
-            extractExecution(body) ?: throw RuntimeException("Could not find execution parameter in login page")
+        val execution = extractExecution(body) ?: extractExecutionFromUrl(initialResponse.uri().toString())
+        ?: throw RuntimeException("Could not find execution parameter in login page")
+        val csrfToken = extractCsrfToken(body)
 
         // 2. POST credentials
-        val formData = mapOf(
+        val formData = mutableMapOf(
             "j_username" to (props.username ?: ""),
             "j_password" to (props.password ?: ""),
             "execution" to execution,
             "_eventId_proceed" to ""
         )
+        if (csrfToken != null) {
+            formData["csrf_token"] = csrfToken
+        }
 
         val postBody = formData.entries.joinToString("&") {
             "${it.key}=${java.net.URLEncoder.encode(it.value, Charsets.UTF_8)}"
@@ -70,6 +69,10 @@ internal class ShibbolethServiceImpl(
         val loginRequest = HttpRequest.newBuilder()
             .uri(initialResponse.uri()) // Post to the same URL or the one we were redirected to
             .header("Content-Type", "application/x-www-form-urlencoded")
+            .header(
+                "User-Agent",
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
+            )
             .POST(HttpRequest.BodyPublishers.ofString(postBody))
             .build()
 
@@ -85,8 +88,7 @@ internal class ShibbolethServiceImpl(
         }
 
         // 3. Extract cookies
-        val idpUri = URI.create(props.idpUrl)
-        val cookies = cookieManager.cookieStore.get(idpUri).associate {
+        val cookies = cookieManager.cookieStore.cookies.associate {
             it.name to it.value
         }
 
@@ -105,6 +107,16 @@ internal class ShibbolethServiceImpl(
 
     private fun extractExecution(html: String): String? {
         val regex = Regex("""name="execution" value="([^"]+)"""")
+        return regex.find(html)?.groupValues?.get(1)
+    }
+
+    private fun extractExecutionFromUrl(url: String): String? {
+        val regex = Regex("""execution=([^&"]+)""")
+        return regex.find(url)?.groupValues?.get(1)
+    }
+
+    private fun extractCsrfToken(html: String): String? {
+        val regex = Regex("""name="csrf_token" value="([^"]+)"""")
         return regex.find(html)?.groupValues?.get(1)
     }
 }

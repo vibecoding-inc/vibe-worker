@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 
 @ConfigurationProperties("shibboleth")
 internal data class ShibbolethProperties(
-    val idpUrl: String = "https://shibboleth.im.jku.at/idp/profile/SAML2/Redirect/SSO",
+    val defaultTargetUrl: String = "https://moodle.jku.at/login/index.php",
     val username: String? = null,
     val password: String? = null
 )

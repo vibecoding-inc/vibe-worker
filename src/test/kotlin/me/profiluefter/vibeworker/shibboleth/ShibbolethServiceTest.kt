@@ -20,7 +20,7 @@ class ShibbolethServiceTest {
         mockWebServer.start()
 
         val props = ShibbolethProperties(
-            idpUrl = mockWebServer.url("/idp").toString(),
+            defaultTargetUrl = mockWebServer.url("/target").toString(),
             username = "testuser",
             password = "testpassword"
         )
@@ -33,7 +33,7 @@ class ShibbolethServiceTest {
     }
 
     @Test
-    fun `getSession should perform login and return cookies`() {
+    fun `login should perform login and return cookies`() {
         // 1. Initial GET response with execution ID
         mockWebServer.enqueue(
             MockResponse()
@@ -49,7 +49,7 @@ class ShibbolethServiceTest {
                 .setBody("Success")
         )
 
-        val session = shibbolethService.getSession()
+        val session = shibbolethService.login(mockWebServer.url("/target").toString())
 
         assertTrue(session.isValid())
         assertEquals("abc123def", session.cookies["shib_idp_session"])
@@ -57,7 +57,7 @@ class ShibbolethServiceTest {
         // Verify requests
         val initialRequest = mockWebServer.takeRequest()
         assertEquals("GET", initialRequest.method)
-        assertEquals("/idp", initialRequest.path)
+        assertEquals("/target", initialRequest.path)
 
         val loginRequest = mockWebServer.takeRequest()
         assertEquals("POST", loginRequest.method)
@@ -68,18 +68,25 @@ class ShibbolethServiceTest {
     }
 
     @Test
-    fun `getSession should cache the session`() {
+    fun `login should not cache the session`() {
         mockWebServer.enqueue(
             MockResponse().setResponseCode(200).setBody("""<input name="execution" value="e1s1">""")
         )
         mockWebServer.enqueue(
             MockResponse().setResponseCode(200).addHeader("Set-Cookie", "session=1").setBody("OK")
         )
+        mockWebServer.enqueue(
+            MockResponse().setResponseCode(200).setBody("""<input name="execution" value="e1s2">""")
+        )
+        mockWebServer.enqueue(
+            MockResponse().setResponseCode(200).addHeader("Set-Cookie", "session=2").setBody("OK")
+        )
 
-        val session1 = shibbolethService.getSession()
-        val session2 = shibbolethService.getSession()
+        val target = mockWebServer.url("/target").toString()
+        val session1 = shibbolethService.login(target)
+        val session2 = shibbolethService.login(target)
 
-        assertEquals(session1, session2)
-        assertEquals(2, mockWebServer.requestCount)
+        assertTrue(session1 != session2)
+        assertEquals(4, mockWebServer.requestCount)
     }
 }
